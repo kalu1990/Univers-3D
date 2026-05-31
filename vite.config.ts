@@ -19,7 +19,7 @@ function securityHeaders(): Plugin {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-src 'none'",
+    "frame-src https://www.youtube-nocookie.com", // transmisiunile live (embed YouTube)
     'upgrade-insecure-requests',
   ].join('; ')
 

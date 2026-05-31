@@ -73,11 +73,11 @@ export default function ExploreHud({ onExit }: { onExit: () => void }) {
     <>
       <button
         type="button"
-        className="esc-button"
+        className="esc-button exit-btn"
         onClick={onExit}
         title={t({ ro: 'Ieși din explorare', en: 'Exit exploring' })}
       >
-        ESC
+        <span>{t({ ro: 'IEȘIRE', en: 'EXIT' })}</span>
       </button>
 
       {/* Taste de zbor, așezate în cruce: Q W E / A . D / . S . */}

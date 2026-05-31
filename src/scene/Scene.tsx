@@ -425,9 +425,20 @@ function ShootingStars() {
 
 /** Scena 3D = FUNDALUL site-ului: cer real + sistem solar, care se plimbă singur
  *  prin diverse priveliști. `exploring` = zbor liber (oprit acum; buton viitor). */
-export default function Scene({ exploring = false }: { exploring?: boolean }) {
+export default function Scene({
+  exploring = false,
+  paused = false,
+}: {
+  exploring?: boolean
+  paused?: boolean
+}) {
   return (
-    <Canvas camera={{ position: [0, 18, -45], fov: 55 }}>
+    <Canvas
+      camera={{ position: [0, 18, -45], fov: 55 }}
+      frameloop={paused ? 'never' : 'always'}
+      dpr={[1, 1.5]}
+      style={{ display: paused ? 'none' : 'block' }}
+    >
       {/* Cer: panoramă 360° reală de spațiu (skybox) + sistemul solar 3D. */}
       <Suspense fallback={null}>
         <SpaceBackground />

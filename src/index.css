@@ -75,6 +75,280 @@ body {
   border-radius: 3px;
 }
 
+/* cât timp o transmisiune e activă, oprim animațiile costisitoare (repaint:
+   box-shadow / color) → tot GPU-ul rămâne pentru video */
+.app.live-active .livebox::before,
+.app.live-active .home-text {
+  animation-play-state: paused;
+}
+
+/* ---- Casetă transmisiuni live — „device" metalic ca butonul ACASĂ (jos-centru) ---- */
+.livebox {
+  position: fixed;
+  /* centrat FĂRĂ transform (transform-ul pe strămoș strică fullscreen-ul iframe) */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  bottom: 18px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* CORP METALIC mereu (în orice fază), ca butonul „ACASĂ" */
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.1), transparent 55%),
+    linear-gradient(160deg, #2b323c, #161a20 45%, #222a33 72%, #11151b);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.55);
+  /* 2 faze: înălțimea și lățimea se animează pe rând (declanșate din JS) */
+  transition:
+    width 0.6s cubic-bezier(0.4, 0.85, 0.3, 1),
+    height 0.6s cubic-bezier(0.4, 0.85, 0.3, 1);
+}
+
+.livebox.is-closed { width: 132px; height: 52px; }
+.livebox.is-rising { width: 132px; height: min(70vh, 540px); }
+.livebox.is-open { width: min(760px, 92vw); height: min(70vh, 540px); }
+
+/* linia neon INSET — ramă metalică mai groasă (vizibilă ca la „ACASĂ"),
+   pulsează verde SINCRONIZAT cu textul butonului „ACASĂ" (2.8s) */
+.livebox::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 9px;
+  border: 1px solid rgba(150, 255, 200, 0.9);
+  pointer-events: none;
+  z-index: 2;
+  animation: live-line-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes live-line-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 7px rgba(90, 255, 165, 0.45),
+      0 0 3px rgba(170, 255, 210, 0.6),
+      inset 0 0 10px rgba(80, 245, 150, 0.4);
+    border-color: rgba(150, 255, 200, 0.7);
+  }
+  50% {
+    box-shadow:
+      0 0 16px rgba(90, 255, 165, 0.85),
+      0 0 5px rgba(170, 255, 210, 0.95),
+      inset 0 0 14px rgba(80, 245, 150, 0.6);
+    border-color: rgba(185, 255, 220, 1);
+  }
+}
+
+/* „ecranul" interior — NEGRU, ca fața butonului „ACASĂ" */
+.livebox-screen {
+  position: absolute;
+  inset: 11px;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 38%, #0b0b0c, #000);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.9);
+  z-index: 0;
+}
+
+/* stratul cu șuruburi, exact pe linia neon (inset 9px) */
+.livebox-bolts {
+  position: absolute;
+  inset: 9px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.livebox-bolt {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 30%, #6b7480, #2a2f36 60%, #0d0f13);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    0 0 6px rgba(90, 255, 165, 0.7);
+}
+
+/* „tab"/bumb METALIC sub casetă (ca la „ACASĂ") */
+.livebox-tab {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 11px;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #2a313b, #12161c);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-top: none;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  z-index: 1;
+}
+
+/* butonul LIVE (când e închis) — text + bulă care CLIPEȘTE (efect înregistrare) */
+.livebox-live {
+  position: relative;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #d9ffe9;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+.livebox-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #49ff9b;
+  box-shadow: 0 0 10px rgba(73, 255, 155, 0.9);
+  animation: rec-blink 1.4s steps(1, end) infinite;
+}
+
+/* bula apare și dispare (înregistrare) */
+@keyframes rec-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* conținutul deschis (apare după ce caseta s-a format) */
+.livebox-panel {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 20px 52px; /* spațiu jos pentru butonul EXIT */
+  opacity: 0;
+  animation: livebox-fade 0.4s ease 0.05s forwards;
+}
+
+@keyframes livebox-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* butonul EXIT al casetei — centrat jos (container, ca hover-ul să nu strice centrarea) */
+.livebox-close-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.livebox-close-wrap .exit-btn {
+  pointer-events: auto;
+}
+
+/* cele 3 taburi (imagini) */
+.live-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+}
+
+.live-tab {
+  flex: 1;
+  position: relative;
+  height: 60px;
+  padding: 0;
+  border: 1px solid rgba(120, 255, 190, 0.25);
+  border-radius: 8px;
+  background: #000;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.live-tab img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.7;
+  transition: opacity 0.12s ease;
+}
+
+.live-tab span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: #d9ffe9;
+  text-align: center;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.85));
+}
+
+.live-tab:hover {
+  border-color: rgba(120, 255, 190, 0.6);
+}
+.live-tab:hover img {
+  opacity: 0.9;
+}
+
+.live-tab.active {
+  border-color: rgba(150, 255, 200, 0.95);
+  box-shadow: 0 0 12px rgba(90, 255, 165, 0.55);
+}
+.live-tab.active img {
+  opacity: 1;
+}
+
+/* transmisiunea activă (video) */
+.live-video {
+  flex: 1;
+  min-height: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(150, 255, 200, 0.35);
+}
+
+.live-video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* în fullscreen, iframe-ul umple tot ecranul (siguranță) */
+.live-video iframe:fullscreen,
+.live-video iframe:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+}
+
 /* ---- Buton „Instalează aplicația" (dreapta-sus, doar când e instalabilă) ---- */
 .install-wrap {
   position: fixed;
@@ -148,28 +422,66 @@ body {
   filter: drop-shadow(0 0 11px rgba(120, 220, 255, 0.75));
 }
 
-/* ---- Mod explorare: ESC (stânga-sus) ---- */
+/* ---- Buton roșu glossy „EXIT/IEȘIRE" (recreat din CSS, fără fundal) ---- */
+.exit-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 19px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #9affc8; /* neon verde, ca textul butonului „ACASĂ" */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.65),
+    0 0 8px rgba(110, 255, 180, 0.5);
+  cursor: pointer;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d4271a 0%, #9c0c02 52%, #ff6a33 100%);
+  box-shadow:
+    0 3px 10px rgba(170, 20, 10, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -3px 8px rgba(110, 0, 0, 0.5);
+  overflow: hidden;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+/* luciul glossy pe jumătatea de sus */
+.exit-btn::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  right: 7px;
+  height: 42%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.04));
+  pointer-events: none;
+}
+
+.exit-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+.exit-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.exit-btn:active {
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+/* ---- Mod explorare: butonul EXIT (stânga-sus) — doar poziționare ---- */
 .esc-button {
   position: fixed;
   left: 20px;
   top: 18px;
   z-index: 50;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: #d6f1ff;
-  cursor: pointer;
-  border: 1px solid rgba(120, 220, 255, 0.45);
-  border-radius: 10px;
-  background: rgba(10, 18, 30, 0.5);
-  backdrop-filter: blur(6px);
-  transition: background 0.12s ease, border-color 0.12s ease;
-}
-
-.esc-button:hover {
-  background: rgba(120, 220, 255, 0.2);
-  border-color: rgba(120, 220, 255, 0.85);
 }
 
 /* ---- Mod explorare: taste de zbor (dreapta-jos), așezate în cruce ----

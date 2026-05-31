@@ -7,6 +7,7 @@ import SunButton from './components/SunButton'
 import SpaceshipButton from './components/SpaceshipButton'
 import ExploreHud from './components/ExploreHud'
 import InstallButton from './components/InstallButton'
+import LiveBox from './components/LiveBox'
 import { resetFlyInput } from './lib/flyInput'
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
   const [homeOpen, setHomeOpen] = useState(false)
   // nava (stânga-sus) intră în modul explorare
   const [exploring, setExploring] = useState(false)
+  // scena 3D se îngheață cât timp caseta live e deschisă (tot GPU-ul → video)
+  const [scenePaused, setScenePaused] = useState(false)
 
   const stopExploring = () => {
     resetFlyInput()
@@ -22,9 +25,9 @@ function App() {
 
   return (
     <LanguageProvider>
-      <main className="app">
+      <main className={`app${scenePaused ? ' live-active' : ''}`}>
         {/* fundal: universul 3D, separat de UI */}
-        <Scene exploring={exploring} />
+        <Scene exploring={exploring} paused={scenePaused} />
 
         {/* UI normal — ascuns în modul explorare */}
         {!exploring && (
@@ -34,6 +37,7 @@ function App() {
             <HomeDescription open={homeOpen} />
             <LanguageSwitcher />
             <InstallButton />
+            <LiveBox onActiveChange={setScenePaused} />
           </>
         )}
 
