@@ -1,11 +1,56 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+
+// Content-Security-Policy strict, injectat ca <meta> DOAR în build-ul de
+// producție (în dev ar bloca HMR-ul). App-ul nu are scripturi inline, deci
+// script-src 'self' nu strică nimic; 'unsafe-inline' rămâne doar pe stiluri
+// (React pune atribute style inline, ex. variabila --a de pe șuruburi).
+function securityHeaders(): Plugin {
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self'",
+    "connect-src 'self'",
+    "worker-src 'self' blob:",
+    "manifest-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-src 'none'",
+    'upgrade-insecure-requests',
+  ].join('; ')
+
+  return {
+    name: 'security-headers-meta',
+    apply: 'build',
+    transformIndexHtml(html) {
+      return {
+        html,
+        tags: [
+          {
+            tag: 'meta',
+            attrs: { 'http-equiv': 'Content-Security-Policy', content: csp },
+            injectTo: 'head-prepend',
+          },
+          {
+            tag: 'meta',
+            attrs: { name: 'referrer', content: 'no-referrer' },
+            injectTo: 'head-prepend',
+          },
+        ],
+      }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    securityHeaders(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon-180.png'],

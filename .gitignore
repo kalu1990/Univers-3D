@@ -25,3 +25,6 @@ dist-ssr
 
 # Date locale Claude Code (nu fac parte din proiect)
 .claude/
+
+# Notițe de securitate — DOAR local, NU se urcă niciodată
+SECURITATE.md
