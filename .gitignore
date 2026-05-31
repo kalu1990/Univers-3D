@@ -28,3 +28,7 @@ dist-ssr
 
 # Notițe de securitate — DOAR local, NU se urcă niciodată
 SECURITATE.md
+
+# Documentație internă — DOAR local, NU se urcă pe GitHub
+CLAUDE.md
+PROGRES.md
