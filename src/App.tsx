@@ -6,6 +6,7 @@ import HomeDescription from './components/HomeDescription'
 import SunButton from './components/SunButton'
 import SpaceshipButton from './components/SpaceshipButton'
 import ExploreHud from './components/ExploreHud'
+import InstallButton from './components/InstallButton'
 import { resetFlyInput } from './lib/flyInput'
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
             <SunButton raised={homeOpen} onClick={() => setHomeOpen((v) => !v)} />
             <HomeDescription open={homeOpen} />
             <LanguageSwitcher />
+            <InstallButton />
           </>
         )}
 
