@@ -8,7 +8,6 @@ import {
   DoubleSide,
   EquirectangularReflectionMapping,
   Matrix4,
-  Quaternion,
   RingGeometry,
   SRGBColorSpace,
   Vector3,
@@ -217,32 +216,28 @@ function SpaceBackground() {
   return null
 }
 
-// Priveliști prin care „se plimbă" fundalul, una după alta, la interval de timp.
-// Toate sunt DEPĂRTATE: sistemul se vede mic, din unghiuri diferite, cu mult
-// spațiu în jur (centrul sistemului ≈ Soarele, la (0, -4, -170)).
-const VIEWS: { pos: Vector3; look: Vector3 }[] = [
-  { pos: new Vector3(0, 196, 610), look: new Vector3(0, -4, -170) }, // din față, de sus
-  { pos: new Vector3(760, 136, 150), look: new Vector3(0, -4, -170) }, // din dreapta
-  { pos: new Vector3(-720, 86, -470), look: new Vector3(0, -4, -170) }, // din spate-stânga
-  { pos: new Vector3(200, 556, 350), look: new Vector3(0, -4, -170) }, // de sus, peste disc
-  { pos: new Vector3(-260, 66, 710), look: new Vector3(0, -4, -170) }, // mult în spate
-]
-const VIEW_SECONDS = 18 // cât stă pe fiecare priveliște înainte să treacă la următoarea
+// Camera de fundal orbitează FOARTE LENT în cerc în jurul sistemului
+// (centrul ≈ Soarele, la (0, -4, -170)), privind mereu spre el. Sistemul se
+// vede mic, cu mult spațiu în jur.
+const ORBIT_CENTER = new Vector3(0, -4, -170)
+const ORBIT_RADIUS = 640 // depărtare
+const ORBIT_HEIGHT = 130 // înălțimea peste centru
+const ORBIT_SPEED = 0.02 // rad/s → un cerc complet în ~5 minute (foarte lent)
 
-/** Regia fundalului: alunecă lin de la o priveliște la alta, ciclic. */
+/** Regia fundalului: orbit lent, continuu, în jurul sistemului. */
 function CameraRig() {
   const { camera } = useThree()
-  const m = useMemo(() => new Matrix4(), [])
-  const q = useMemo(() => new Quaternion(), [])
-  const up = useMemo(() => new Vector3(0, 1, 0), [])
+  const target = useMemo(() => new Vector3(), [])
 
   useFrame((state) => {
-    const i = Math.floor(state.clock.elapsedTime / VIEW_SECONDS) % VIEWS.length
-    const { pos, look } = VIEWS[i]
-    m.lookAt(pos, look, up)
-    q.setFromRotationMatrix(m)
-    camera.position.lerp(pos, 0.02) // lent → tranziții line, calme
-    camera.quaternion.slerp(q, 0.02)
+    const a = state.clock.elapsedTime * ORBIT_SPEED
+    target.set(
+      ORBIT_CENTER.x + Math.cos(a) * ORBIT_RADIUS,
+      ORBIT_CENTER.y + ORBIT_HEIGHT + Math.sin(a * 0.6) * 55, // plutire verticală blândă
+      ORBIT_CENTER.z + Math.sin(a) * ORBIT_RADIUS,
+    )
+    camera.position.lerp(target, 0.04) // pornire lină din poziția inițială
+    camera.lookAt(ORBIT_CENTER)
   })
 
   return null
