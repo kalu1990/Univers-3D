@@ -5,6 +5,9 @@ import { useLanguage } from '../i18n/language'
 // 'open' = s-a deschis lateral, apare conținutul.
 type Phase = 'closed' | 'rising' | 'open'
 
+// Cale către /public ținând cont de sub-cale (base) la deploy.
+const asset = (p: string) => `${import.meta.env.BASE_URL}${p}`
+
 const STEP_MS = 650 // durata fiecărei faze (maiestuos)
 const BOLT_INSET = 9 // = lățimea metalică / poziția liniei neon (ca la „ACASĂ")
 const SPACING = 70 // distanța dintre șuruburi (mai rare, greutate ca la „ACASĂ")
@@ -12,9 +15,9 @@ const SPACING = 70 // distanța dintre șuruburi (mai rare, greutate ca la „AC
 // Cele 3 transmisiuni live (YouTube). ID-urile se pot schimba când un canal
 // repornește transmisia — se actualizează ușor aici.
 const SOURCES = [
-  { key: 'sen', label: { ro: 'ISS · Pământ 4K', en: 'ISS · Earth 4K' }, thumb: '/live/sen.png', videoId: 'fO9e9jnhYK8' },
-  { key: 'nasa', label: { ro: 'NASA · ISS', en: 'NASA · ISS' }, thumb: '/live/nasa.png', videoId: 'FuuC4dpSQ1M' },
-  { key: 'sky', label: { ro: 'Cer nocturn', en: 'Night sky' }, thumb: '/live/sky.png', videoId: 'LooM-fzPk7k' },
+  { key: 'sen', label: { ro: 'ISS · Pământ 4K', en: 'ISS · Earth 4K' }, thumb: asset('live/sen.png'), videoId: 'fO9e9jnhYK8' },
+  { key: 'nasa', label: { ro: 'NASA · ISS', en: 'NASA · ISS' }, thumb: asset('live/nasa.png'), videoId: 'FuuC4dpSQ1M' },
+  { key: 'sky', label: { ro: 'Cer nocturn', en: 'Night sky' }, thumb: asset('live/sky.png'), videoId: 'LooM-fzPk7k' },
 ] as const
 
 /** Șuruburi distribuite egal pe perimetrul liniei neon, în funcție de mărime. */

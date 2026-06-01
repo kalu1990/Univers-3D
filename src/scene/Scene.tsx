@@ -15,6 +15,10 @@ import {
 import type { Mesh, MeshBasicMaterial, Texture } from 'three'
 import { flyInput } from '../lib/flyInput'
 
+/** Cale către un fișier din /public, ținând cont de sub-cale (base) la deploy.
+ *  Ex.: asset('planets/sun.jpg') → './planets/sun.jpg' pe GitHub Pages. */
+const asset = (p: string) => `${import.meta.env.BASE_URL}${p}`
+
 /** Glow radial neted (pentru sori / stele strălucitoare). */
 function makeRadialGlow(r: number, g: number, b: number) {
   const size = 128
@@ -64,7 +68,7 @@ function Sun({
   radius?: number
 }) {
   const glow = useMemo(() => makeRadialGlow(255, 225, 160), [])
-  const sunTex = useTexture('/planets/sun.jpg')
+  const sunTex = useTexture(asset('planets/sun.jpg'))
   sunTex.colorSpace = SRGBColorSpace
   return (
     <group position={position}>
@@ -158,16 +162,16 @@ const PLANETS: {
 /** Soarele + toate cele 8 planete (texturi REALE), așezate corect față de Soare. */
 function Planets() {
   const tex = useTexture({
-    mercury: '/planets/mercury.jpg',
-    venus: '/planets/venus_atmosphere.jpg',
-    earth: '/planets/earth_daymap.jpg',
-    mars: '/planets/mars.jpg',
-    jupiter: '/planets/jupiter.jpg',
-    saturn: '/planets/saturn.jpg',
-    uranus: '/planets/uranus.jpg',
-    neptune: '/planets/neptune.jpg',
-    moon: '/planets/moon.jpg',
-    ring: '/planets/saturn_ring.png',
+    mercury: asset('planets/mercury.jpg'),
+    venus: asset('planets/venus_atmosphere.jpg'),
+    earth: asset('planets/earth_daymap.jpg'),
+    mars: asset('planets/mars.jpg'),
+    jupiter: asset('planets/jupiter.jpg'),
+    saturn: asset('planets/saturn.jpg'),
+    uranus: asset('planets/uranus.jpg'),
+    neptune: asset('planets/neptune.jpg'),
+    moon: asset('planets/moon.jpg'),
+    ring: asset('planets/saturn_ring.png'),
   }) as Record<string, Texture>
 
   // culori corecte (sRGB) pentru toate texturile foto
@@ -208,7 +212,7 @@ function Planets() {
 
 /** Fundal: panoramă 360° reală de spațiu (Cale Lactee), mapată echirectangular. */
 function SpaceBackground() {
-  const texture = useTexture('/space.jpg')
+  const texture = useTexture(asset('space.jpg'))
   const { scene } = useThree()
   texture.mapping = EquirectangularReflectionMapping
   texture.colorSpace = SRGBColorSpace
