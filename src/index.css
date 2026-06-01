@@ -725,16 +725,17 @@ body {
   letter-spacing: 0.3px;
   color: #cfe6ff;
   text-decoration: none;
-  border: 1px solid rgba(120, 220, 255, 0.2);
+  border: 1px solid rgba(120, 220, 255, 0.12);
   border-radius: 999px;
-  background: rgba(8, 14, 24, 0.4);
+  background: rgba(8, 14, 24, 0.28);
   backdrop-filter: blur(6px);
-  opacity: 0.55;
-  transition: opacity 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+  opacity: 0.28; /* foarte discret în repaus; se „topește” în fundal */
+  transition: opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.credit-badge:hover {
-  opacity: 1;
+.credit-badge:hover,
+.credit-badge:focus-visible {
+  opacity: 1; /* clar doar când treci cu mouse-ul / la focus (accesibilitate) */
   border-color: rgba(150, 220, 255, 0.6);
   box-shadow: 0 0 14px rgba(110, 200, 255, 0.3);
 }
