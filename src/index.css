@@ -709,3 +709,45 @@ body {
     transform: translate(-50%, -50%);
   }
 }
+
+/* ---- Badge tehnic „cod sursă” (discret, stânga-jos) ---- */
+.credit-badge {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #cfe6ff;
+  text-decoration: none;
+  border: 1px solid rgba(120, 220, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(8, 14, 24, 0.4);
+  backdrop-filter: blur(6px);
+  opacity: 0.55;
+  transition: opacity 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.credit-badge:hover {
+  opacity: 1;
+  border-color: rgba(150, 220, 255, 0.6);
+  box-shadow: 0 0 14px rgba(110, 200, 255, 0.3);
+}
+
+.credit-mark {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .credit-badge {
+    font-size: 11px;
+    padding: 5px 9px;
+  }
+}

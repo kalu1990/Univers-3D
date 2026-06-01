@@ -8,6 +8,7 @@ import SpaceshipButton from './components/SpaceshipButton'
 import ExploreHud from './components/ExploreHud'
 import InstallButton from './components/InstallButton'
 import LiveBox from './components/LiveBox'
+import CreditBadge from './components/CreditBadge'
 import { resetFlyInput } from './lib/flyInput'
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             <LanguageSwitcher />
             <InstallButton />
             <LiveBox onActiveChange={setScenePaused} />
+            <CreditBadge />
           </>
         )}
 
