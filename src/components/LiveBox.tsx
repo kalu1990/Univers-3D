@@ -136,6 +136,9 @@ export default function LiveBox({
               key={SOURCES[active].videoId}
               src={`https://www.youtube-nocookie.com/embed/${SOURCES[active].videoId}?autoplay=1&rel=0`}
               title={t(SOURCES[active].label)}
+              // YouTube cere domeniul ca să accepte embed-ul (altfel „Eroare 153”).
+              // Trimite DOAR originea către YouTube; restul site-ului rămâne no-referrer.
+              referrerPolicy="strict-origin-when-cross-origin"
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
             />
