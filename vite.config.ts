@@ -48,6 +48,9 @@ function securityHeaders(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Căi RELATIVE: site-ul merge și pe sub-cale (kalu1990.github.io/Univers-3D/),
+  // și pe domeniu propriu la rădăcină (univers.is-a.dev) — fără schimbări.
+  base: './',
   plugins: [
     react(),
     securityHeaders(),
