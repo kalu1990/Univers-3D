@@ -718,8 +718,7 @@ body {
   z-index: 50;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 11px;
+  padding: 6px; /* rotund, doar iconița în repaus */
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -736,6 +735,7 @@ body {
 .credit-badge:hover,
 .credit-badge:focus-visible {
   opacity: 1; /* clar doar când treci cu mouse-ul / la focus (accesibilitate) */
+  padding: 6px 11px; /* se lărgește ca să încapă textul */
   border-color: rgba(150, 220, 255, 0.6);
   box-shadow: 0 0 14px rgba(110, 200, 255, 0.3);
 }
@@ -746,9 +746,25 @@ body {
   flex-shrink: 0;
 }
 
+/* Textul stă ascuns în repaus (rămâne în DOM) și se desfășoară la hover/focus. */
+.credit-text {
+  max-width: 0;
+  margin-left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: max-width 0.25s ease, margin-left 0.25s ease, opacity 0.2s ease;
+}
+
+.credit-badge:hover .credit-text,
+.credit-badge:focus-visible .credit-text {
+  max-width: 220px;
+  margin-left: 7px;
+  opacity: 1;
+}
+
 @media (max-width: 480px) {
   .credit-badge {
     font-size: 11px;
-    padding: 5px 9px;
   }
 }
